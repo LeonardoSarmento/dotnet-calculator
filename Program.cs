@@ -6,81 +6,15 @@
     }
     static void Menu()
     {
-        Console.Clear();
+        Calculator calculator = new();
         Console.WriteLine("Welcome to the all knowing calculator!");
-        Console.WriteLine("Choose wisely which function would u like to use:");
-        Console.WriteLine("1 - Add");
-        Console.WriteLine("2 - Subtraction");
-        Console.WriteLine("3 - Multiply");
-        Console.WriteLine("4 - Divide");
-        Console.WriteLine("9 - Exit");
-        Console.WriteLine("-------------");
-        short res = short.Parse(Console.ReadLine());
+        calculator.StartCalculation();
         
-
-        switch (res)
+        do
         {
-            case 1: Add(); break;
-            case 2: Subtraction(); break;
-            case 3: Multiply(); break;
-            case 4: Divide(); break;
-            case 9: Exit(); break;
-            default: Menu(); break;
-        }
+         calculator.Calculate();
+        } while ((int)calculator.Function != 9 );
     }
-    private static Values GetValues()
-    {
-        Values values = new();
-        Console.WriteLine("State the first value:");
-        values.FirstValue = float.Parse(Console.ReadLine());
-        Console.WriteLine("State the second value:");
-        values.SecondValue = float.Parse(Console.ReadLine());
-        return values;
-    }
-    private static void Add()
-    {
-        Console.Clear();
-        Values values = GetValues();
-        float result = values.FirstValue + values.SecondValue;
-        Console.WriteLine($"After adding ,the result was {result}");
-        Console.ReadKey();
-        Menu();
-    }
-    private static void Subtraction()
-    {
-        Values values = GetValues();
-        float result = values.FirstValue - values.SecondValue;
-        Console.WriteLine($"After subtracting ,the result was {result}");
-        Console.ReadKey();
-        Menu();
-    }
-    private static void Multiply()
-    {
-        Values values = GetValues();
-        float result = values.FirstValue * values.SecondValue;
-        Console.WriteLine($"After multiplying ,the result was {result}");
-        Console.ReadKey();
-        Menu();
-    }
-    private static void Divide()
-    {
-        Values values = GetValues();
-        float result = values.FirstValue / values.SecondValue;
-        Console.WriteLine($"After dividing ,the result was {result}");
-        Console.ReadKey();
-        Menu();
-    }
-    private static void Exit()
-    {
-        Console.WriteLine("Exiting the allknowing calculator!");
-        System.Environment.Exit(0);
-    }
-}
-
-struct Values(float firstValue, float secondValue)
-{
-    public float FirstValue = firstValue;
-    public float SecondValue = secondValue;
 }
 
 // Working of the Calculator v2 below
@@ -98,8 +32,6 @@ class Calculator
     public float TotalValue;
     public EFunctionCalculator Function;
     public EFunctionCalculator ChooseFunction(){
-        Console.Clear();
-        Console.WriteLine("Welcome to the all knowing calculator!");
         Console.WriteLine("Choose wisely which function would u like to use:");
         Console.WriteLine("1 - Add");
         Console.WriteLine("2 - Subtraction");
@@ -107,7 +39,20 @@ class Calculator
         Console.WriteLine("4 - Divide");
         Console.WriteLine("9 - Exit");
         Console.WriteLine("-------------");
-        short res = short.Parse(Console.ReadLine());
+        short res;
+        while (true)
+        {
+            Console.Write("Please enter a number: ");
+            try
+            {
+                res = short.Parse(Console.ReadLine());
+                break;
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+            }
+        }
         Function = res switch
         {
             1 => EFunctionCalculator.Add,
@@ -117,31 +62,82 @@ class Calculator
             9 => EFunctionCalculator.Exit,
             _ => EFunctionCalculator.TryAgain,
         };
+        Console.WriteLine($"You choose: {Function}");
+        Console.WriteLine("");
         return Function;
     }
-    public void AskForValue(){
-        Console.WriteLine("State the value:");
-        Value = float.Parse(Console.ReadLine());
+    public void Calculate(){
+        switch ((int)Function)
+        {
+            case 1: Add(); break;
+            case 2: Subtract(); break;
+            case 3: Multiply(); break;
+            case 4: Divide(); break;
+            case 9: Exit(); break;
+            default: ChooseFunction(); break;
+        }
     }
-    public void Add(){
+
+    public void AskForValue(){
+        while (true)
+        {
+            Console.Write("Please enter a number: ");
+            try
+            {
+                Value = float.Parse(Console.ReadLine());
+                break;
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Invalid input. Please enter a number.");
+            }
+        }
+        Console.WriteLine("");
+    }
+    public void StartCalculation(){
+        Console.Clear();
         AskForValue();
         TotalValue += Value;
-        Console.WriteLine($"After adding ,the result was {TotalValue}");
+        ChooseFunction();
+    }
+    public void Add(){
+        Console.WriteLine("-----------------------------------------");
+        AskForValue();
+        Console.WriteLine($"Adding: {TotalValue} + {Value}");
+        TotalValue += Value;
+        GetTotalValue();
+        Console.WriteLine("-----------------------------------------");
+        ChooseFunction();
     }
     public void Subtract(){
+        Console.WriteLine("-----------------------------------------");
         AskForValue();
+        Console.WriteLine($"Subtracting: {TotalValue} - {Value}");
         TotalValue -= Value;
-        Console.WriteLine($"After subtracting ,the result was {TotalValue}");
+        GetTotalValue();
+        Console.WriteLine("-----------------------------------------");
+        ChooseFunction();
     }
     public void Multiply(){
+        Console.WriteLine("-----------------------------------------");
         AskForValue();
+        Console.WriteLine($"Multiplying: {TotalValue} * {Value}");
         TotalValue *= Value;
-        Console.WriteLine($"After multiplying ,the result was {TotalValue}");
+        GetTotalValue();
+        Console.WriteLine("-----------------------------------------");
+        ChooseFunction();
     }
     public void Divide(){
+        Console.WriteLine("-----------------------------------------");
         AskForValue();
+        Console.WriteLine($"Dividing: {TotalValue} / {Value}");
         TotalValue /= Value;
-        Console.WriteLine($"After dividing ,the result was {TotalValue}");
+        GetTotalValue();
+        Console.WriteLine("-----------------------------------------");
+        ChooseFunction();
+    }
+    public void GetTotalValue(){
+    Console.WriteLine($"After {Function}, the result was {TotalValue}");
     }
 
     public void Exit(){
