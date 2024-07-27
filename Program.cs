@@ -9,20 +9,23 @@
         Calculator calculator = new();
         Console.WriteLine("Welcome to the all knowing calculator!");
         calculator.StartCalculation();
-        
+
         do
         {
-         calculator.Calculate();
-        } while ((int)calculator.Function != 9 );
+            calculator.PerformFunction();
+        } while (calculator.Function != EFunctionCalculator.Exit);
     }
 }
 
-// Working of the Calculator v2 below
-enum EFunctionCalculator {
+enum EFunctionCalculator
+{
     Add = 1,
     Subtract = 2,
     Multiply = 3,
     Divide = 4,
+    Modulus = 5,
+    Square = 6,
+    Pow = 7,
     TryAgain = 8,
     Exit = 9
 }
@@ -31,18 +34,31 @@ class Calculator
     public float Value;
     public float TotalValue;
     public EFunctionCalculator Function;
-    public EFunctionCalculator ChooseFunction(){
+
+    public void StartCalculation()
+    {
+        Console.Clear();
+        AskForValue();
+        TotalValue += Value;
+    }
+
+    public static void FunctionsOptions()
+    {
+        foreach (EFunctionCalculator Option in Enum.GetValues(typeof(EFunctionCalculator)))
+        {
+            if (Option != EFunctionCalculator.TryAgain)
+                Console.WriteLine($"{(int)Option} - {Option}");
+        }
+    }
+    public EFunctionCalculator ChooseFunction()
+    {
         Console.WriteLine("Choose wisely which function would u like to use:");
-        Console.WriteLine("1 - Add");
-        Console.WriteLine("2 - Subtraction");
-        Console.WriteLine("3 - Multiply");
-        Console.WriteLine("4 - Divide");
-        Console.WriteLine("9 - Exit");
-        Console.WriteLine("-------------");
+        FunctionsOptions();
+        Console.WriteLine("-----------------------------------------");
         short res;
         while (true)
         {
-            Console.Write("Please enter a number: ");
+            Console.Write("Please enter the number of the function: ");
             try
             {
                 res = short.Parse(Console.ReadLine());
@@ -59,6 +75,9 @@ class Calculator
             2 => EFunctionCalculator.Subtract,
             3 => EFunctionCalculator.Multiply,
             4 => EFunctionCalculator.Divide,
+            5 => EFunctionCalculator.Modulus,
+            6 => EFunctionCalculator.Square,
+            7 => EFunctionCalculator.Pow,
             9 => EFunctionCalculator.Exit,
             _ => EFunctionCalculator.TryAgain,
         };
@@ -66,19 +85,9 @@ class Calculator
         Console.WriteLine("");
         return Function;
     }
-    public void Calculate(){
-        switch ((int)Function)
-        {
-            case 1: Add(); break;
-            case 2: Subtract(); break;
-            case 3: Multiply(); break;
-            case 4: Divide(); break;
-            case 9: Exit(); break;
-            default: ChooseFunction(); break;
-        }
-    }
-
-    public void AskForValue(){
+    public void AskForValue()
+    {
+        Console.WriteLine("-----------------------------------------");
         while (true)
         {
             Console.Write("Please enter a number: ");
@@ -94,53 +103,78 @@ class Calculator
         }
         Console.WriteLine("");
     }
-    public void StartCalculation(){
-        Console.Clear();
-        AskForValue();
-        TotalValue += Value;
-        ChooseFunction();
-    }
-    public void Add(){
+    public void InformResult()
+    {
+        Console.WriteLine($"After {Function}, the result was {TotalValue}");
         Console.WriteLine("-----------------------------------------");
-        AskForValue();
+    }
+    public void PerformFunction()
+    {
+        do
+        {
+            ChooseFunction();
+        } while (Function == EFunctionCalculator.TryAgain);
+        if (Function != EFunctionCalculator.Square && Function != EFunctionCalculator.Exit)
+        {
+
+            AskForValue();
+        }
+        Calculate();
+        InformResult();
+    }
+    public void Calculate()
+    {
+        switch ((int)Function)
+        {
+            case 1: Add(); break;
+            case 2: Subtract(); break;
+            case 3: Multiply(); break;
+            case 4: Divide(); break;
+            case 5: Modulus(); break;
+            case 6: Square(); break;
+            case 7: Pow(); break;
+            case 9: Exit(); break;
+            default: ChooseFunction(); break;
+        }
+    }
+    public void Add()
+    {
         Console.WriteLine($"Adding: {TotalValue} + {Value}");
         TotalValue += Value;
-        GetTotalValue();
-        Console.WriteLine("-----------------------------------------");
-        ChooseFunction();
     }
-    public void Subtract(){
-        Console.WriteLine("-----------------------------------------");
-        AskForValue();
+    public void Subtract()
+    {
         Console.WriteLine($"Subtracting: {TotalValue} - {Value}");
         TotalValue -= Value;
-        GetTotalValue();
-        Console.WriteLine("-----------------------------------------");
-        ChooseFunction();
     }
-    public void Multiply(){
-        Console.WriteLine("-----------------------------------------");
-        AskForValue();
+    public void Multiply()
+    {
         Console.WriteLine($"Multiplying: {TotalValue} * {Value}");
         TotalValue *= Value;
-        GetTotalValue();
-        Console.WriteLine("-----------------------------------------");
-        ChooseFunction();
     }
-    public void Divide(){
-        Console.WriteLine("-----------------------------------------");
-        AskForValue();
+    public void Divide()
+    {
         Console.WriteLine($"Dividing: {TotalValue} / {Value}");
         TotalValue /= Value;
-        GetTotalValue();
-        Console.WriteLine("-----------------------------------------");
-        ChooseFunction();
     }
-    public void GetTotalValue(){
-    Console.WriteLine($"After {Function}, the result was {TotalValue}");
+    public void Modulus()
+    {
+        Console.WriteLine($"Modulus: {TotalValue} % {Value}");
+        TotalValue %= Value;
+    }
+    public void Square()
+    {
+        Console.WriteLine($"Square root: √{TotalValue}");
+        TotalValue = (float)Math.Sqrt(TotalValue);
+    }
+    public void Pow()
+    {
+        Console.WriteLine($"Powering: {TotalValue} ^ {Value}");
+        TotalValue = (float)Math.Pow(TotalValue, Value);
     }
 
-    public void Exit(){
+    public void Exit()
+    {
         Console.WriteLine($"From my calculations, the total value of your desires was {TotalValue}");
         Console.WriteLine("Exiting the allknowing calculator!");
         System.Environment.Exit(0);
