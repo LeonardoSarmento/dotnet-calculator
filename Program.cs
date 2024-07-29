@@ -34,14 +34,12 @@ class Calculator
     public float Value;
     public float TotalValue;
     public EFunctionCalculator Function;
-
     public void StartCalculation()
     {
         Console.Clear();
         AskForValue();
         TotalValue += Value;
     }
-
     public static void FunctionsOptions()
     {
         foreach (EFunctionCalculator Option in Enum.GetValues(typeof(EFunctionCalculator)))
@@ -94,11 +92,22 @@ class Calculator
             try
             {
                 Value = float.Parse(Console.ReadLine());
+                if (Value == 0 && Function == EFunctionCalculator.Divide)
+                    throw new FormatException();
                 break;
             }
             catch (FormatException)
             {
-                Console.WriteLine("Invalid input. Please enter a number.");
+                if (Function == EFunctionCalculator.Divide)
+                {
+
+                    Console.WriteLine("Cannot divide by 0. Please enter another value.");
+                }
+                else
+                {
+
+                    Console.WriteLine("Invalid input. Please enter a number.");
+                }
             }
         }
         Console.WriteLine("");
@@ -172,7 +181,6 @@ class Calculator
         Console.WriteLine($"Powering: {TotalValue} ^ {Value}");
         TotalValue = (float)Math.Pow(TotalValue, Value);
     }
-
     public void Exit()
     {
         Console.WriteLine($"From my calculations, the total value of your desires was {TotalValue}");
