@@ -60,9 +60,15 @@ class Calculator
             try
             {
                 res = short.Parse(Console.ReadLine());
+                if (TotalValue < 0 && res == (int)EFunctionCalculator.Square)
+                    throw new ApplicationException();
                 break;
             }
-            catch (FormatException)
+            catch (ApplicationException)
+            {
+                Console.WriteLine("Cannot take the square root of a negative number. Please enter another number.");
+            }
+            catch
             {
                 Console.WriteLine("Invalid input. Please enter a number.");
             }
